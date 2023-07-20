@@ -94,6 +94,7 @@ public class BoardService {
     //사용자가 Front에서 keyword를 검색하면 Controller로부터 keyword를 전달받게 된다.
     //이 Keyword가 Entity 내에 있는지 확인하는 Method이다.
     //있을 경우, boardEntities를 for loop 돌아서 boardDtoList에 Element를 추가한 뒤 boardDtoList를 Controller에게 전달해주고, 없을 경우 빈 Array를 전달해준다.
+
     @Transactional
     public List<BoardDto> searchPosts(String keyword){
         List<Board> boardEntities = boardRepository.findByTitleContaining(keyword);
