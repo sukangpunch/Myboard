@@ -26,7 +26,7 @@ public class SwaggerConfig {
 
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("SpringBoot Rest API Documentation")
+                .title("게시판 Api Documentation")
                 .description("3rd UMC Server: BAEMIN Clone coding - ?조")
                 .version("0.1")
                 .build();

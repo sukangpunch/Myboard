@@ -1,9 +1,7 @@
 package com.springboot.board.service;
 
 import com.springboot.board.domain.Board;
-import com.springboot.board.domain.User;
 import com.springboot.board.dto.BoardDto;
-import com.springboot.board.dto.UserDto;
 import com.springboot.board.repository.BoardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,6 +38,7 @@ public class BoardService {
 
 
     //repository의 find() 관련 메서드를 호출할 때 Pageable 인터페이스를 구현한 Class(PageRequest.of())를 전달하면 Paging을 할 수 있다.
+
     //첫 번째와 두 번째 인자로 page와 size를 전달하고, 세 번째 인자로 정렬 방식을 결정하였다.
     //(createdDate 기준으로 오름차순 할 수 있도록 설정한 부분이다.)
     //반환된 Page 객체의 getContent() 메서드를 호출하면, Entity를 List 형태로 꺼내올 수 있다. 이를 DTO로 Controller에게 전달하게 된다.
@@ -138,44 +137,43 @@ public class BoardService {
     //null값을 처리할 수 있기 때문에 SQL과 연동할 경우 처리가 용이하다.
     //DB에서 자료형이 정수형이지만 null값이 필요할 경우 사용된다.
 
-    public Integer[] getPageList(Integer curPageNum) {
-        // 페이지 목록을 저장할 Integer 배열을 생성합니다.
-        // BLOCK_PAGE_NUM_COUNT는 한 번에 보여줄 페이지 번호의 개수를 나타냅니다.
-        Integer[] pageList = new Integer[BLOCK_PAGE_NUM_COUNT];
-
-
-        // 총 게시물의 개수를 가져오는 getBoardCount() 메서드를 호출하여
-        // 총 게시물 갯수를 Double 형태로 저장합니다.
-        Double postsTotalCount = Double.valueOf(this.getBoardCount());
-
-        // 총 게시물을 한 페이지에 표시되는 게시물 개수로 나누어 총 페이지 수를 계산합니다.
-        // Math.ceil() 함수를 사용하여 소수점 이하를 올림 처리하여 마지막 페이지 번호를 구합니다.
-        Integer totalLastPageNum = (int)(Math.ceil((postsTotalCount/PAGE_POST_COUNT)));
-
-        //현재 페이지를 기준으로 표시될 블럭의 마지막 페이지 번호를 계산합니다.
-        // totalLastPageNum과 curPageNum + BLOCK_PAGE_NUM_COUNT 중 작은 값을 선택합니다.
-        Integer blockLastPageNum = (totalLastPageNum > curPageNum + BLOCK_PAGE_NUM_COUNT)
-                ? curPageNum + BLOCK_PAGE_NUM_COUNT
-                : totalLastPageNum;
-
-        // 현재 페이지 번호가 3 이하인 경우 1로 조정하고, 그렇지 않으면 현재 페이지 번호에서 2를 뺍니다.
-        // 이 조정은 페이지 목록이 1부터 시작하도록 하고, 현재 페이지가 가운데에 위치하도록 합니다.
-        curPageNum = (curPageNum <= 3) ? 1 : curPageNum - 2;
-
-        //페이지 목록 배열에 페이지 번호를 할당합니다.
-        // curPageNum부터 blockLastPageNum까지의 숫자를 배열에 순서대로 저장합니다.
-        for (int val = curPageNum, idx = 0; val <= blockLastPageNum; val++, idx++) {
-            pageList[idx] = val;
-        }
-
-        return pageList;
-    }
+   
+    //나중에 view 나타낼때 사용
+//    public Integer[] getPageList(Integer curPageNum) {
+//        // 페이지 목록을 저장할 Integer 배열을 생성합니다.
+//        // BLOCK_PAGE_NUM_COUNT는 한 번에 보여줄 페이지 번호의 개수를 나타냅니다.
+//        Integer[] pageList = new Integer[BLOCK_PAGE_NUM_COUNT];
+//
+//
+//        // 총 게시물의 개수를 가져오는 getBoardCount() 메서드를 호출하여
+//        // 총 게시물 갯수를 Double 형태로 저장합니다.
+//        Double postsTotalCount = Double.valueOf(this.getBoardCount());
+//
+//        // 총 게시물을 한 페이지에 표시되는 게시물 개수로 나누어 총 페이지 수를 계산합니다.
+//        // Math.ceil() 함수를 사용하여 소수점 이하를 올림 처리하여 마지막 페이지 번호를 구합니다.
+//        Integer totalLastPageNum = (int)(Math.ceil((postsTotalCount/PAGE_POST_COUNT)));
+//
+//        //현재 페이지를 기준으로 표시될 블럭의 마지막 페이지 번호를 계산합니다.
+//        // totalLastPageNum과 curPageNum + BLOCK_PAGE_NUM_COUNT 중 작은 값을 선택합니다.
+//        Integer blockLastPageNum = (totalLastPageNum > curPageNum + BLOCK_PAGE_NUM_COUNT)
+//                ? curPageNum + BLOCK_PAGE_NUM_COUNT
+//                : totalLastPageNum;
+//
+//        // 현재 페이지 번호가 3 이하인 경우 1로 조정하고, 그렇지 않으면 현재 페이지 번호에서 2를 뺍니다.
+//        // 이 조정은 페이지 목록이 1부터 시작하도록 하고, 현재 페이지가 가운데에 위치하도록 합니다.
+//        curPageNum = (curPageNum <= 3) ? 1 : curPageNum - 2;
+//
+//        //페이지 목록 배열에 페이지 번호를 할당합니다.
+//        // curPageNum부터 blockLastPageNum까지의 숫자를 배열에 순서대로 저장합니다.
+//        for (int val = curPageNum, idx = 0; val <= blockLastPageNum; val++, idx++) {
+//            pageList[idx] = val;
+//        }
+//        return pageList;
+//    }
 
     //이렇게 하면 현재 페이지를 기준으로 한 페이지 블럭의 페이지 목록이 생성되고,
     // 이를 UI에서 이용하여 페이지 네비게이션을 표시할 수 있게 됩니다.
     // 예를 들어, getPageList(5)를 호출하면
     // 현재 페이지를 5로 기준으로 한 페이지 블럭의 페이지 목록이 반환됩니다.
-
-
 
 }
