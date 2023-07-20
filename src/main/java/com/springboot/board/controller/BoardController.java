@@ -1,5 +1,6 @@
 package com.springboot.board.controller;
 
+import com.springboot.board.domain.Board;
 import com.springboot.board.dto.BoardDto;
 import com.springboot.board.service.BoardService;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("board")
 @AllArgsConstructor
+
 public class BoardController {
 
 
@@ -36,7 +38,7 @@ public class BoardController {
 
     // 게시물 상세 페이지이며, {no}로 페이지 넘버를 받는다.
     // PathVariable 애노테이션을 통해 no를 받음
-    @ApiOperation(value="게시물 상세 조회", notes = "게시물의 정보를 상세 조회 할 수 있게 함.")
+    @ApiOperation(value="게시물 상세 조회", notes = "게시물의 번호로 정보를 상세 조회 할 수 있게 함.")
     @GetMapping("/post/{no}")
     public ResponseEntity<BoardDto> detail(@PathVariable("no") Long no) {
         BoardDto boardDto = boardService.getPost(no);
@@ -52,7 +54,7 @@ public class BoardController {
 
 
     //글을 쓴 뒤 POST 메서드로 DB에 저장하고 그 후에 특정 경로로 리다이렉션 해줄것
-    @ApiOperation(value="게시물 작성",notes = "게시물을 작성함")
+    @ApiOperation(value="게시물 작성", notes = "게시물을 작성할 수 있다.")
     @PostMapping("/post")
     public ResponseEntity<Void> write(@RequestBody BoardDto boardDto) {
         boardService.savePost(boardDto);
@@ -74,14 +76,14 @@ public class BoardController {
     //수정 후 데이터베이스에 저장하는 메서드
     @ApiOperation(value="게시물 수정",notes = "게시물을 수정함")
     @PutMapping("/post/edit/{no}")
-    public ResponseEntity<Void> update(@PathVariable("no") Long no, @RequestBody BoardDto boardDto) {
-        boardService.savePost(boardDto);
+    public ResponseEntity<Board> update(@PathVariable("no") Long no, @RequestBody BoardDto boardDto) {
+        Board board = boardService.updateBoard(no,boardDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(board,HttpStatus.OK);
     }
 
     //삭제 메서드
-    @ApiOperation(value = "게시물 삭제")
+    @ApiOperation(value = "게시물 삭제", notes = "게시물 번호로 게시물 삭제")
     @DeleteMapping("/post/{no}")
     public ResponseEntity<Void> delete(@PathVariable("no") Long no) {
         boardService.deletePost(no);

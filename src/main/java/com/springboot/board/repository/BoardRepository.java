@@ -14,6 +14,8 @@ import java.util.List;
 //=> Entity Class가 Board이며, Primary Key의 Type은 Long임을 의미한다.
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByTitleContaining(String keyword);
+
+    //아직 미구현
     Board findByUser(User user);
 
 }

@@ -1,7 +1,9 @@
 package com.springboot.board.service;
 
 import com.springboot.board.domain.Board;
+import com.springboot.board.domain.User;
 import com.springboot.board.dto.BoardDto;
+import com.springboot.board.dto.UserDto;
 import com.springboot.board.repository.BoardRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -82,6 +85,19 @@ public class BoardService {
     public Long savePost(BoardDto boardDto){
 
         return boardRepository.save(boardDto.toEntity()).getId();
+    }
+
+    public Board updateBoard(Long no, BoardDto boardDto) {
+        // 데이터베이스에서 no에 해당하는 board 엔티티를 조회
+        Board board = boardRepository.findById(no)
+                .orElseThrow(() -> new NoSuchElementException("Board not found with ID: " + no));
+
+        // board 엔티티의 필드를 boardDto 값으로 업데이트하고 데이터베이스에 저장
+        board.setWriter(boardDto.getWriter());
+        board.setTitle(boardDto.getTitle());
+        board.setContent(boardDto.getContent());
+
+        return boardRepository.save(board);
     }
 
     //게시글 삭제
