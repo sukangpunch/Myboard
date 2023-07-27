@@ -1,9 +1,12 @@
 package com.springboot.board.service;
 
 import com.springboot.board.domain.Board;
+import com.springboot.board.domain.User;
 import com.springboot.board.dto.BoardDto;
 import com.springboot.board.repository.BoardRepository;
+import com.springboot.board.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,13 +16,14 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class BoardService {
 
-    private BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
+
+    private final UserRepository userRepository;
 
     private static final int BLOCK_PAGE_NUM_COUNT = 5; // 블럭에 존재하는 페이지 번호 수
     private static final int PAGE_POST_COUNT = 4; // 한 페이지에 존재하는 게시글 수
@@ -63,8 +67,7 @@ public class BoardService {
     @Transactional
     public BoardDto getPost(Long id){
         // Optional : NPE(NullPointerException) 방지
-        Optional<Board> boardWrapper = boardRepository.findById(id);
-        Board board = boardWrapper.get();
+         Board board = boardRepository.findById(id).orElseThrow(() -> new NullPointerException("null이다"));
 
         BoardDto boardDto = BoardDto.builder()
                 .title(board.getTitle())
@@ -81,10 +84,15 @@ public class BoardService {
     //boardRepository의 save 메서드를 사용하여 데이터를 저장한다.
     //그 뒤에 getter를 활용하여 Id를 받아오고 return 밸류를 전달해준다.
     @Transactional
-    public Long savePost(BoardDto boardDto){
+    public Long savePost(Long userId,BoardDto boardDto){
 
-        return boardRepository.save(boardDto.toEntity()).getId();
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("잘못된 회원입니다"));
+        Board board = boardDto.toEntity();
+        board.setUser(user);
+
+        return boardRepository.save(board).getId();
     }
+
 
     public Board updateBoard(Long no, BoardDto boardDto) {
         // 데이터베이스에서 no에 해당하는 board 엔티티를 조회

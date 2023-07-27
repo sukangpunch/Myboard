@@ -15,7 +15,6 @@ import java.util.List;
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findByTitleContaining(String keyword);
 
-    //아직 미구현
     Board findByUser(User user);
 
 }

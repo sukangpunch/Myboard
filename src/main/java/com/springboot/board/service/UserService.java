@@ -1,22 +1,35 @@
 package com.springboot.board.service;
 
+import com.springboot.board.domain.Board;
 import com.springboot.board.domain.User;
+import com.springboot.board.dto.BoardDto;
 import com.springboot.board.dto.UserDto;
+import com.springboot.board.dto.UserResponseDto;
+import com.springboot.board.repository.BoardRepository;
 import com.springboot.board.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+    private final BoardRepository boardRepository;
 
 
-    public User getUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElse(null);
+    public UserResponseDto getUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자가 없어"));
+
+        return UserResponseDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 
     public User createUser(UserDto userDto) {
@@ -47,5 +60,26 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+
+    public List<BoardDto> getBoardsByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
+
+        List<Board> boards = user.getBoardList();
+
+        List<BoardDto> boardDtoList = new ArrayList<>();
+        for (Board board : boards) {
+            boardDtoList.add(convertEntityToDto(board));
+        }
+        return boardDtoList;
+    }
+
+    // Board 엔티티를 BoardDto로 변환하는 메서드
+    private BoardDto convertEntityToDto(Board board) {
+        // Board 엔티티를 BoardDto로 변환하는 로직 구현
+        // (예시로는 생성자나 빌더 패턴을 사용하여 변환하도록 하겠습니다.)
+        return new BoardDto(board.getTitle(), board.getContent(), board.getWriter(),board.getCreatedDate(),board.getModifiedDate());
     }
 }
