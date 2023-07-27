@@ -12,6 +12,7 @@ User API
 | 3 | GET | /users/info/{userId} | 유저 정보 조회 | userId: 유저 아이디(Long,required) | responseCode:“USER_FOUND” reponseMessage: “유저 프로필 조회 완료”data: (유저  정보를 담은 Dto(UserDto) | 200: OK (요청이 정상적으로 처리됨404: Not Found (해당하는 식별자가 존재하지 않는 경우) |
 | 4 | PUT | /users/{userId} | 유저 정보 수정 | userId: 유저 아이디(Long, required)name: 유저 이름(String,required)email: (String,required) | responseCode:"USER_UPDATED"responseMessage: "유저 정보 수정 완료"data: (유저 정보를 담은 Dto (UserDto) | 200: OK (요청이 정상적으로 처리됨)400: Bad Request (요청 파라미터에 문제가 있는 경우) |
 | 5 | GET | /users/search/{userId} | 유저 번호로 게시글 조회 | userId:유저의 아이디(Long,required) | responseCode:"USERBOARD_FOUND" responseMessage: "유저의 게시물 조회 완료"data: (유저 리스트에 있는 게시물Dto(BoardDto) | 200: OK (요청이 정상적으로 처리됨404: Not Found (해당하는 식별자가 존재하지 않는 경우) |
+
 Board API
 
 | index | Method | URI | Description | Request Parameters | Response Parameters | HTTP Status |
