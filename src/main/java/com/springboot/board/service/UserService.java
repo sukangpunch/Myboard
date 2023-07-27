@@ -3,6 +3,7 @@ package com.springboot.board.service;
 import com.springboot.board.domain.Board;
 import com.springboot.board.domain.User;
 import com.springboot.board.dto.BoardDto;
+import com.springboot.board.dto.BoardResponseDto;
 import com.springboot.board.dto.UserDto;
 import com.springboot.board.dto.UserResponseDto;
 import com.springboot.board.repository.BoardRepository;
@@ -81,5 +82,11 @@ public class UserService {
         // Board 엔티티를 BoardDto로 변환하는 로직 구현
         // (예시로는 생성자나 빌더 패턴을 사용하여 변환하도록 하겠습니다.)
         return new BoardDto(board.getTitle(), board.getContent(), board.getWriter(),board.getCreatedDate(),board.getModifiedDate());
+    }
+
+    private BoardResponseDto convertEntityToResponseDto(Board board) {
+        // Board 엔티티를 BoardDto로 변환하는 로직 구현
+        // (예시로는 생성자나 빌더 패턴을 사용하여 변환하도록 하겠습니다.)
+        return new BoardResponseDto(board.getId(),board.getTitle(), board.getContent(), board.getWriter(),board.getCreatedDate(),board.getModifiedDate());
     }
 }

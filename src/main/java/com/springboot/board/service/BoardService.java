@@ -3,6 +3,7 @@ package com.springboot.board.service;
 import com.springboot.board.domain.Board;
 import com.springboot.board.domain.User;
 import com.springboot.board.dto.BoardDto;
+import com.springboot.board.dto.BoardResponseDto;
 import com.springboot.board.repository.BoardRepository;
 import com.springboot.board.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -65,19 +66,20 @@ public class BoardService {
     //-> builder() 메서드를 활용하여 boardDTO 객체로 만들고
     //-> boadrDTO를 리턴 밸류로 전달해준다.
     @Transactional
-    public BoardDto getPost(Long id){
+    public BoardResponseDto getPost(Long id){
         // Optional : NPE(NullPointerException) 방지
          Board board = boardRepository.findById(id).orElseThrow(() -> new NullPointerException("null이다"));
 
-        BoardDto boardDto = BoardDto.builder()
+        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
+                .id(board.getId())
+                .writer(board.getWriter())
                 .title(board.getTitle())
                 .content(board.getContent())
-                .writer(board.getWriter())
-                .createdDate(board.getCreatedDate())
                 .modifiedDate(board.getModifiedDate())
+                .createdDate(board.getCreatedDate())
                 .build();
 
-        return boardDto;
+        return boardResponseDto;
     }
 
 

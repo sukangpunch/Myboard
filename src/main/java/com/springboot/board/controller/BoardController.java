@@ -2,6 +2,7 @@ package com.springboot.board.controller;
 
 import com.springboot.board.domain.Board;
 import com.springboot.board.dto.BoardDto;
+import com.springboot.board.dto.BoardResponseDto;
 import com.springboot.board.dto.UserDto;
 import com.springboot.board.service.BoardService;
 import io.swagger.annotations.ApiOperation;
@@ -33,10 +34,10 @@ public class BoardController {
     // PathVariable 애노테이션을 통해 no를 받음
     @ApiOperation(value="게시물 상세 조회", notes = "게시물의 번호로 정보를 상세 조회 할 수 있게 함.")
     @GetMapping("/post/{no}")
-    public ResponseEntity<BoardDto> detail(@PathVariable("no") Long no) {
-        BoardDto boardDto = boardService.getPost(no);
+    public ResponseEntity<BoardResponseDto> detail(@PathVariable("no") Long no) {
+        BoardResponseDto boardResponseDto = boardService.getPost(no);
 
-        return new ResponseEntity<>(boardDto, HttpStatus.OK);
+        return new ResponseEntity<>(boardResponseDto, HttpStatus.OK);
     }
 
 
