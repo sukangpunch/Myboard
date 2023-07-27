@@ -19,10 +19,6 @@ Board API
 | 1 | POST | /boards/post/{userId} | 게시물 작성 | userId: 유저아이디(Long,required)writer: 작성명(String,required)title: 제목(String,required)content: 내용(String,required) | reponseCode: “BOARD_REGISTERD” responseMessage: “게시물 등록 완료”data: (게시물 정보를 담은 Dto(BoardDto) | 201: Created (요청이 정상적으로 처리됨)400: Bad Request (요청 파라미터에 문제가 있는 경우) |
 | 2 | GET | /boards/list/{page} | 페이지 번호로 게시물 조회 | page: 페이지번호(Long,required) | responseCode: “PAGEBOARD_FOUND”responseMessage: “ 페이지번호로 조회 완료”data :(해당 페이지 게시물 정보를 담은 Dto(BoardDto) | 200: OK (요청이 정상적으로 처리됨)404: Not Found (해당하는 식별자가 존재하지 않는 경우) |
 | 3 | DELETE | /boards/{boardId} | 게시물 삭제 | boardId:게시물 번호(Long,equired) | responseCode: “board_DELETED”responseMessage: “게시물  삭제 완료” | 204: No Content (요청이 정상적으로 처리됨)404: Not Found(해당하는 식별자가 존재하지 않는 경우) |
-| 4 | PUT | /boards/post/edit/{boardId} | 게시물 수정 | userId: 유저아이디(Long,required)
-writer: 작성명(String,required)title: 제목(String,required)content: 내용(String,required) | responseCode: "BOARD_UPDATED"
-responseMessage: "게시물 수정 완료"data: (게시물 정보를 담은 Dto (BoardDto)) | 200: OK (요청이 정상적으로 처리됨)400: Bad Request (요청 파라미터에 문제가 있는 경우)404: Not Found(해당하는 식별자가 존재하지 않는 경우) |
-| 5 | GET | /boards/post/{boardId} | 게시물 상세 검색 | boardId: 게시물 번호(Long,required) | responseCode: “BOARD_FOUND”
-responseMessage: “ 게시물 번호로 조회 완료”data :(해당 게시물 정보를 담은 Dto(BoardDto) | 200: OK (요청이 정상적으로 처리됨)404: Not Found (해당하는 식별자가 존재하지 않는 경우 |
-| 6 | GET | /boards/search/{keyword} | 게시물 키워드로 조회 | keyword: 키워드(String,required) | responseCode: “BOARD_FOUND”
-responseMessage: “ 게시물 키워드로 조회 완료”data :(해당 게시물 정보를 담은 Dto(BoardDto) | 200: OK (요청이 정상적으로 처리됨)404: Not Found (해당하는 식별자가 존재하지 않는 경우 |
+| 4 | PUT | /boards/post/edit/{boardId} | 게시물 수정 | userId: 유저아이디(Long,required)writer: 작성명(String,required)title: 제목(String,required)content: 내용(String,required) | responseCode: "BOARD_UPDATED"responseMessage: "게시물 수정 완료"data: (게시물 정보를 담은 Dto (BoardDto)) | 200: OK (요청이 정상적으로 처리됨)400: Bad Request (요청 파라미터에 문제가 있는 경우)404: Not Found(해당하는 식별자가 존재하지 않는 경우) |
+| 5 | GET | /boards/post/{boardId} | 게시물 상세 검색 | boardId: 게시물 번호(Long,required) | responseCode: “BOARD_FOUND”responseMessage: “ 게시물 번호로 조회 완료”data :(해당 게시물 정보를 담은 Dto(BoardDto) | 200: OK (요청이 정상적으로 처리됨)404: Not Found (해당하는 식별자가 존재하지 않는 경우 |
+| 6 | GET | /boards/search/{keyword} | 게시물 키워드로 조회 | keyword: 키워드(String,required) | responseCode: “BOARD_FOUND”responseMessage: “ 게시물 키워드로 조회 완료”data :(해당 게시물 정보를 담은 Dto(BoardDto) | 200: OK (요청이 정상적으로 처리됨)404: Not Found (해당하는 식별자가 존재하지 않는 경우 |
