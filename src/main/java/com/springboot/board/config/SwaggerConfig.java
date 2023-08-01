@@ -27,7 +27,7 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("게시판 Api Documentation")
-                .description("3rd UMC Server: BAEMIN Clone coding - ?조")
+                .description("간단한 게시판 Api를 테스트 해봅시다.")
                 .version("0.1")
                 .build();
     }

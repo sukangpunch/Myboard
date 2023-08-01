@@ -19,9 +19,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final BoardRepository boardRepository;
-
-
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 없어"));
@@ -33,16 +30,27 @@ public class UserService {
                 .build();
     }
 
-    public User createUser(UserDto userDto) {
+    public UserResponseDto createUser(UserDto userDto) {
         // UserDto를 User 엔티티로 변환하여 데이터베이스에 저장
+
         User user = User.builder()
                 .name(userDto.getName())
                 .email(userDto.getEmail())
+
                 .build();
-        return userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+
+        UserResponseDto userResponseDto = UserResponseDto.builder()
+                .id(savedUser.getId())
+                .name(savedUser.getName())
+                .email(savedUser.getEmail())
+                .build();
+
+        return userResponseDto;
     }
 
-    public User updateUser(Long userId, UserDto userDto) {
+    public UserResponseDto updateUser(Long userId, UserDto userDto) {
         // 데이터베이스에서 userId에 해당하는 User 엔티티를 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
@@ -50,8 +58,14 @@ public class UserService {
         // User 엔티티의 필드를 UserInputDto의 값으로 업데이트하고 데이터베이스에 저장
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
+        userRepository.save(user);
 
-        return userRepository.save(user);
+        UserResponseDto userResponseDto = UserResponseDto.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+
+        return userResponseDto;
     }
 
     public boolean deleteUser(Long userId) {
@@ -81,12 +95,7 @@ public class UserService {
     private BoardDto convertEntityToDto(Board board) {
         // Board 엔티티를 BoardDto로 변환하는 로직 구현
         // (예시로는 생성자나 빌더 패턴을 사용하여 변환하도록 하겠습니다.)
-        return new BoardDto(board.getTitle(), board.getContent(), board.getWriter(),board.getCreatedDate(),board.getModifiedDate());
+        return new BoardDto(board.getTitle(), board.getContent(), board.getWriter());
     }
 
-    private BoardResponseDto convertEntityToResponseDto(Board board) {
-        // Board 엔티티를 BoardDto로 변환하는 로직 구현
-        // (예시로는 생성자나 빌더 패턴을 사용하여 변환하도록 하겠습니다.)
-        return new BoardResponseDto(board.getId(),board.getTitle(), board.getContent(), board.getWriter(),board.getCreatedDate(),board.getModifiedDate());
-    }
 }

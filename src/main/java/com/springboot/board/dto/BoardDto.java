@@ -16,11 +16,9 @@ public class BoardDto {
     private String writer;
     private String title;
     private String content;
-    private LocalDateTime createdDate;
-    private LocalDateTime modifiedDate;
 
     //1. @Builder 애노테이션으로 BoardDto 객체의 생성자 부분을 만들어주고
-    //2. toEntity 메서드를 통해 Service -> Database(Entity)로 Datca(게시판 글 상세 정보)를 전달할 때 Dto를 통해서 전달한다.
+    //2. toEntity 메서드를 통해 Service -> Database(Entity)로 Data(게시판 글 상세 정보)를 전달할 때 Dto를 통해서 전달한다.
 
     public Board toEntity(){
         Board board = Board.builder()
@@ -33,11 +31,9 @@ public class BoardDto {
     }
 
     @Builder
-    public BoardDto(String title, String content,String writer, LocalDateTime createdDate, LocalDateTime modifiedDate ){
+    public BoardDto(String title, String content,String writer){
         this.writer=writer;
         this.title=title;
         this.content = content;
-        this.createdDate=createdDate;
-        this.modifiedDate=modifiedDate;
     }
 }
