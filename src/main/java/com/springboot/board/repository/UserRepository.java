@@ -10,4 +10,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
    //아직 미구현
     Optional<User> findByEmail(String email);//  email을 통해 이미 생성된 사용자인지 체크
 
+    User getByUid(String uid);
 }

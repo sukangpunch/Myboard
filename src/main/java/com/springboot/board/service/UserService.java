@@ -3,14 +3,13 @@ package com.springboot.board.service;
 import com.springboot.board.domain.Board;
 import com.springboot.board.domain.User;
 import com.springboot.board.dto.BoardDto;
-import com.springboot.board.dto.BoardResponseDto;
 import com.springboot.board.dto.UserDto;
 import com.springboot.board.dto.UserResponseDto;
-import com.springboot.board.repository.BoardRepository;
 import com.springboot.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -30,25 +29,25 @@ public class UserService {
                 .build();
     }
 
-    public UserResponseDto createUser(UserDto userDto) {
-        // UserDto를 User 엔티티로 변환하여 데이터베이스에 저장
-
-        User user = User.builder()
-                .name(userDto.getName())
-                .email(userDto.getEmail())
-
-                .build();
-
-        User savedUser = userRepository.save(user);
-
-        UserResponseDto userResponseDto = UserResponseDto.builder()
-                .id(savedUser.getId())
-                .name(savedUser.getName())
-                .email(savedUser.getEmail())
-                .build();
-
-        return userResponseDto;
-    }
+//    public UserResponseDto createUser(UserDto userDto) {
+//        // UserDto를 User 엔티티로 변환하여 데이터베이스에 저장
+//
+//        User user = User.builder()
+//                .name(userDto.getName())
+//                .email(userDto.getEmail())
+//
+//                .build();
+//
+//        User savedUser = userRepository.save(user);
+//
+//        UserResponseDto userResponseDto = UserResponseDto.builder()
+//                .id(savedUser.getId())
+//                .name(savedUser.getName())
+//                .email(savedUser.getEmail())
+//                .build();
+//
+//        return userResponseDto;
+//    }
 
     public UserResponseDto updateUser(Long userId, UserDto userDto) {
         // 데이터베이스에서 userId에 해당하는 User 엔티티를 조회
@@ -78,6 +77,8 @@ public class UserService {
     }
 
 
+    //LAZY 사용시 세션이 남아있지 않아서 오류가 뜨기 때문에 Transactional 사용
+    @Transactional
     public List<BoardDto> getBoardsByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
