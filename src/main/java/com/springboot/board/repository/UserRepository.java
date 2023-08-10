@@ -7,8 +7,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
 
-   //아직 미구현
-    Optional<User> findByEmail(String email);//  email을 통해 이미 생성된 사용자인지 체크
-
+    //현제 id값은 인덱스 값이기 때문에, 토큰생성을 위해 uid를 추출하는 메서드
     User getByUid(String uid);
+
 }

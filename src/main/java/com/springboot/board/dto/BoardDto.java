@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 //데이터를 캡슐화한 데이터 전달 객체
 
 @Getter
-@Setter
 @ToString           //객체가 가지고 있는 정보나 값들을 문자열로 만들어 리턴
 @NoArgsConstructor
 public class BoardDto {

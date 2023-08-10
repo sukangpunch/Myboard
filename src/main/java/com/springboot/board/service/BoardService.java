@@ -55,6 +55,10 @@ public class BoardService {
         List<Board> boardEntities = page.getContent();
         List<BoardResponseDto> boardDtoList = new ArrayList<>();
 
+        if(boardEntities.isEmpty()){
+            throw new RuntimeException("해당하는 페이지에 게시물을 찾을 수 없습니다. 페이지 :" + pageNum);
+        }
+
         for(Board board : boardEntities){
             boardDtoList.add(this.convertEntityToDto(board));
         }
@@ -70,14 +74,7 @@ public class BoardService {
         // Optional : NPE(NullPointerException) 방지
          Board board = boardRepository.findById(id).orElseThrow(() -> new NullPointerException("게시물이 존재하지 않습니다."));
 
-        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
-                .id(board.getId())
-                .writer(board.getWriter())
-                .title(board.getTitle())
-                .content(board.getContent())
-                .modifiedDate(board.getModifiedDate())
-                .createdDate(board.getCreatedDate())
-                .build();
+        BoardResponseDto boardResponseDto = this.convertEntityToDto(board);
 
         return boardResponseDto;
     }
@@ -109,14 +106,7 @@ public class BoardService {
         board.setModifiedDate(LocalDateTime.now());
         boardRepository.save(board);
 
-        BoardResponseDto boardResponseDto = BoardResponseDto.builder()
-                .id(board.getId())
-                .writer(board.getWriter())
-                .title(board.getTitle())
-                .content(board.getContent())
-                .createdDate(board.getCreatedDate())
-                .modifiedDate(board.getModifiedDate())
-                .build();
+        BoardResponseDto boardResponseDto = this.convertEntityToDto(board);
 
         return boardResponseDto;
     }
@@ -136,7 +126,9 @@ public class BoardService {
         List<Board> boardEntities = boardRepository.findByTitleContaining(keyword);
         List<BoardResponseDto> boardDtoList = new ArrayList<>();
 
-        if(boardEntities.isEmpty()) return boardDtoList;
+        if(boardEntities.isEmpty()){
+            throw new RuntimeException("키워드에 해당하는 게시물을 찾울 수 없습니다.: " + keyword);
+        }
 
         for(Board board : boardEntities){
             boardDtoList.add(this.convertEntityToDto(board));

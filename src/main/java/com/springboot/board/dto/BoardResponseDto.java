@@ -1,12 +1,10 @@
 package com.springboot.board.dto;
 
-import com.springboot.board.domain.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @NoArgsConstructor
 
 public class BoardResponseDto {

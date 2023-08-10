@@ -7,6 +7,7 @@ import com.springboot.board.dto.UserDto;
 import com.springboot.board.dto.UserResponseDto;
 import com.springboot.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,6 +18,7 @@ import java.util.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.findById(userId)
@@ -29,26 +31,6 @@ public class UserService {
                 .build();
     }
 
-//    public UserResponseDto createUser(UserDto userDto) {
-//        // UserDto를 User 엔티티로 변환하여 데이터베이스에 저장
-//
-//        User user = User.builder()
-//                .name(userDto.getName())
-//                .email(userDto.getEmail())
-//
-//                .build();
-//
-//        User savedUser = userRepository.save(user);
-//
-//        UserResponseDto userResponseDto = UserResponseDto.builder()
-//                .id(savedUser.getId())
-//                .name(savedUser.getName())
-//                .email(savedUser.getEmail())
-//                .build();
-//
-//        return userResponseDto;
-//    }
-
     public UserResponseDto updateUser(Long userId, UserDto userDto) {
         // 데이터베이스에서 userId에 해당하는 User 엔티티를 조회
         User user = userRepository.findById(userId)
@@ -60,6 +42,7 @@ public class UserService {
         userRepository.save(user);
 
         UserResponseDto userResponseDto = UserResponseDto.builder()
+                .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();
@@ -67,12 +50,16 @@ public class UserService {
         return userResponseDto;
     }
 
-    public boolean deleteUser(Long userId) {
-        if (userRepository.existsById(userId)) {
-            userRepository.deleteById(userId);
-            return true;
-        } else {
+    public boolean deleteUser(String userId, String password) {
+        User user = userRepository.getByUid(userId);
+
+        if(!passwordEncoder.matches(password,user.getPassword())){
             return false;
+        }
+        else
+        {
+            userRepository.delete(user);
+            return true;
         }
     }
 

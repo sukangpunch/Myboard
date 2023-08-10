@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+//인증이 실패한 경우에 대한 처리
+//보통 로그인 후에 헤더에 토큰으로 인증하지 않으면 발생
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

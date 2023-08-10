@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+//설정 파일을 만들기 위한 어노테이션 or Bean을 등록하기 위한 어노테이션
+//싱글톤으로 등록되어 단 1번만 출력
 @Configuration
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -19,6 +21,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    // Spring Security의 필터 체인 초기화 단계에서 호출됩니다.
+    // 일반적으로 Spring Security가 시작되면 보안 설정이 초기화되고,
+    // 이 메서드가 호출되어 웹 보안 구성이 이루어진다.
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception{
         httpSecurity.httpBasic().disable()
@@ -30,9 +35,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/sign-api/sign-in","/sign-api/sign-up","/sign-api/exception","/swagger-resources/**","/swagger-ui/index.html",
-                        "/webjars/**","/swagger/**","/sign-api/exception","/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                .antMatchers("/users/sign-in","/users/sign-up","/users/exception","/swagger-resources/**","/swagger-ui/index.html",
+                        "/webjars/**","/swagger/**","/users/exception","/v3/api-docs/**", "/swagger-ui/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/boards/**").hasAnyAuthority("ROLE_ADMIN","ROLE_USER")
+                .antMatchers(HttpMethod.GET,"/users/**").hasAnyAuthority("ROLE_ADMIN","ROLE_USER")
 
                 .antMatchers("**exception**").permitAll()
 

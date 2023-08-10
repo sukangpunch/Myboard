@@ -1,72 +1,152 @@
 package com.springboot.board.controller;
 
-import com.springboot.board.dto.BoardDto;
-import com.springboot.board.dto.UserDto;
-import com.springboot.board.dto.UserResponseDto;
+import com.springboot.board.domain.User;
+import com.springboot.board.dto.*;
+import com.springboot.board.repository.UserRepository;
+import com.springboot.board.service.SignService;
 import com.springboot.board.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Api(tags = {"유저 정보"}, description = "유저 조회,수정,삭제")
+@Api(tags = {"유저 정보"}, description = "유저 회원가입, 로그인, 조회, 수정, 삭제")
 @RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     private final UserService userService;
 
-    //X-AUTH-TOKEN 형식으로 값을 받아 유효성을 체크함.
-    @ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN",value = "로그인 성공후 발급받은 access_token",required = true,dataType = "String",paramType = "header")})
+    private final SignService signService;
+
+    private final UserRepository userRepository;
+
+
     @ApiOperation(value="사용자 계정 조회", notes = "사용자 계정을 조회합니다.")
-    @GetMapping("/info/{userId}")
-    public ResponseEntity<UserResponseDto> getUser(@PathVariable Long userId) {
-        UserResponseDto userResponseDto = userService.getUser(userId);
+    @GetMapping("/info")
+    public ResponseEntity<UserResponseDto> getUser() {
 
-        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String uid = userDetails.getUsername(); // 로그인한 사용자의 이름 (username)
+            User user = userRepository.getByUid(uid);
+
+            LOGGER.info("[UserPost]유저 정보를 조회합니다. 유저 Id : {}",user.getUid());
+
+            UserResponseDto userResponseDto = userService.getUser(user.getId());
+
+            return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
     }
 
-//    @ApiOperation(value="사용자 계정 생성", notes = "사용자 계정을 생성합니다.")
-//    @PostMapping
-//    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserDto userDto) {
-//        UserResponseDto userResponseDto = userService.createUser(userDto);
-//
-//        return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
-//    }
 
-    @ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN",value = "로그인 성공후 발급받은 access_token",required = true,dataType = "String",paramType = "header")})
     @ApiOperation(value="사용자 계정 수정", notes = "사용자 계정을 수정합니다.")
-    @PutMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserDto userDto) {
-        UserResponseDto userResponseDto = userService.updateUser(userId, userDto);
+    @PutMapping("/updateUser")
+    public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserDto userDto) {
 
-        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String uid = userDetails.getUsername(); // 로그인한 사용자의 이름 (username)
+            User user = userRepository.getByUid(uid);
+
+            LOGGER.info("[UserUpdate]유저 정보를 수정합니다. 유저 Id : {}",user.getUid());
+
+            UserResponseDto userResponseDto = userService.updateUser(user.getId(), userDto);
+
+            return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
+
     }
 
-    @ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN",value = "로그인 성공후 발급받은 access_token",required = true,dataType = "String",paramType = "header")})
     @ApiOperation(value="사용자 계정 삭제", notes = "사용자 계정을 삭제합니다.")
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        boolean deleted = userService.deleteUser(userId);
+    @DeleteMapping("/deleteUser")
+    public ResponseEntity<Void> deleteUser(
+            @ApiParam(value = "ID", required = true) @RequestParam String id,
+            @ApiParam(value = "Password", required = true) @RequestParam String password) throws RuntimeException{
+        LOGGER.info("[UserDelete]유저 계정을 삭제합니다. Id : {}, password : **** ",id);
+
+        boolean deleted = userService.deleteUser(id,password);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ApiImplicitParams({@ApiImplicitParam(name = "X-AUTH-TOKEN",value = "로그인 성공후 발급받은 access_token",required = true,dataType = "String",paramType = "header")})
-    @ApiOperation(value ="사용자 번호로 게시물 조회", notes = "사용자 번호로 사용자가 작성한 게시글들을 조회 할 수 있습니다.")
-    @GetMapping({"/{userId}"})
-    public ResponseEntity<List<BoardDto>> searchBoard(@PathVariable("userId") Long userId){
-        List<BoardDto> userDtoList = userService.getBoardsByUserId(userId);
+    @ApiOperation(value ="사용자 게시물 조회", notes = "사용자가 작성한 게시글들을 조회 할 수 있습니다.")
+    @GetMapping({"/searchBoard"})
+    public ResponseEntity<List<BoardDto>> searchBoard(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return new ResponseEntity<>(userDtoList, HttpStatus.OK);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String uid = userDetails.getUsername(); // 로그인한 사용자의 이름 (username)
+            User user = userRepository.getByUid(uid);
+
+            LOGGER.info("[UserUpdate]유저 정보를 수정합니다. 유저 Id : {}",user.getUid());
+
+            List<BoardDto> userDtoList = userService.getBoardsByUserId(user.getId());
+
+            return new ResponseEntity<>(userDtoList,HttpStatus.OK);
     }
 
+    @ApiOperation(value="로그인",notes = "아이디와 비밀번호를 입력하세요")
+    @PostMapping(value = "/sign-in")
+    public SignInResultDto signIn(
+            @ApiParam(value = "ID", required = true) @RequestParam String id,
+            @ApiParam(value = "Password", required = true) @RequestParam String password) throws RuntimeException{
+        LOGGER.info("[signIn] 로그인을 시도하고 있습니다. id : {], pw: ****",id);
+        SignInResultDto signInResultDto = signService.signIn(id,password);
 
+        if(signInResultDto.getCode() == 0){
+            LOGGER.info("[signIn] 정상적으로 로그인 되었습니다. id : {}, token : {}",id,signInResultDto.getToken());
+        }
+
+        return signInResultDto;
+    }
+
+    @ApiOperation(value="회원가입",notes = "아이디, 비밀번호, 이메일, 권한을 입력하세요")
+    @PostMapping(value = "/sign-up")
+    public SignUpResultDto signUp(
+            @ApiParam(value="ID",required = true) @RequestParam String id,
+            @ApiParam(value="비밀번호",required = true) @RequestParam String password,
+            @ApiParam(value="이름",required = true) @RequestParam String name,
+            @ApiParam(value="이메일",required = true) @RequestParam String email,
+            @ApiParam(value="권한",required = true) @RequestParam String role){
+        LOGGER.info("[signUp] 회원가입을 수행합니다. id: {},password: ****, name : {}, email : {},  role : {}",id,name,email,role);
+        SignUpResultDto signUpResultDto = signService.signUp(id,password,name,email,role);
+
+        LOGGER.info("[signUp] 회원가입을 완료했습니다. id : {}", id);
+
+        return signUpResultDto;
+    }
+
+    //@ExceptionHandler = 특정 예외가 발생했을 때 해당 예외를 처리하는 메서드
+    //RuntimeException 이 발생하였을때 실행되는 메서드
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseEntity<Map<String,String>> ExceptionHandler(RuntimeException e){
+        HttpHeaders responseHeaders = new HttpHeaders();
+
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+        LOGGER.error("ExceptionHandler 호출, {}, {}",e.getCause(),e.getMessage());
+
+        Map<String,String> map = new HashMap<>();
+        map.put("error type",httpStatus.getReasonPhrase());
+        map.put("code","400");
+        map.put("message","잘못된 접근입니다.");
+
+        return new ResponseEntity<>(map, responseHeaders, httpStatus);
+    }
 }

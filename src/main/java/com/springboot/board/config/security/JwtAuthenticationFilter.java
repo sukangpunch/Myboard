@@ -2,7 +2,6 @@ package com.springboot.board.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 //JwtAuthenticationFilter는 JWT 토큰으로 인증하고 SecurityContextHolder에 추가하는 필터를 설정하는 클래스
+//OncePerRequestFilter를 상속받아 구현한 필터는 매 요청마다 한번만 실행되게끔 구현된다.
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);

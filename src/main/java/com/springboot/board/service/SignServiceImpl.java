@@ -59,9 +59,6 @@ public class SignServiceImpl implements SignService {
         if(!savedUser.getName().isEmpty()){
             LOGGER.info("[getSignUpResult] 정상 처리 완료");
             setSuccessResult(signUpResultDto);
-        }else{
-            LOGGER.info("[getSignUpResult] 실패 처리 완료");
-            setFailResult(signUpResultDto);
         }
         return signUpResultDto;
 
@@ -84,6 +81,7 @@ public class SignServiceImpl implements SignService {
                 .token(jwtTokenProvider.createToken(String.valueOf(user.getUid()),
                         user.getRoles()))
                 .build();
+
         LOGGER.info("[getSignInResult] SignInResultDto 객체에 값 주입");
         setSuccessResult(signInResultDto);
 
@@ -95,12 +93,6 @@ public class SignServiceImpl implements SignService {
         result.setSuccess(true);
         result.setCode(CommonResponse.SUCCESS.getCode());
         result.setMsg(CommonResponse.SUCCESS.getMsg());
-    }
-
-    private void setFailResult(SignUpResultDto result){
-        result.setSuccess(false);
-        result.setCode(CommonResponse.FAIL.getCode());
-        result.setMsg(CommonResponse.FAIL.getMsg());
     }
 
 }

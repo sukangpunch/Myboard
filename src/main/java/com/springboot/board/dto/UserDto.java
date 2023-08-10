@@ -11,7 +11,6 @@ public class UserDto {
     private String name;
     private String email;
 
-
     @Builder
     public UserDto(String name, String email){
             this.name=name;
