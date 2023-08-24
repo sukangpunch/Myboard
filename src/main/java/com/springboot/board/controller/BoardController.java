@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class BoardController {
     //글을 쓴 뒤 POST 메서드로 DB에 저장하고 그 후에 특정 경로로 리다이렉션 해줄것
     @ApiOperation(value="게시물 작성", notes = "게시물을 작성할 수 있습니다..")
     @PostMapping("/post")
-    public ResponseEntity<Void> write(@RequestBody BoardDto boardDto) {
+    public ResponseEntity<Void> write(@Valid @RequestBody BoardDto boardDto) {
         //헤더에 담긴 토큰을 기반으로 현재 인증된 사용자의 정보를 가져옴,
         //사용자의 이름(id),비밀번호,권한 등 정보를 담고있음.
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

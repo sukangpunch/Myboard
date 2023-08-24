@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class UserController {
 
     @ApiOperation(value="사용자 계정 수정", notes = "사용자 계정을 수정합니다.")
     @PutMapping("/updateUser")
-    public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserDto userDto) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -103,14 +104,12 @@ public class UserController {
 
     @ApiOperation(value="로그인",notes = "아이디와 비밀번호를 입력하세요")
     @PostMapping(value = "/sign-in")
-    public SignInResultDto signIn(
-            @ApiParam(value = "ID", required = true) @RequestParam String id,
-            @ApiParam(value = "Password", required = true) @RequestParam String password) throws RuntimeException{
-        LOGGER.info("[signIn] 로그인을 시도하고 있습니다. id : {], pw: ****",id);
-        SignInResultDto signInResultDto = signService.signIn(id,password);
+    public SignInResultDto signIn(@Valid @RequestBody SignInRequestDto requestDto) throws RuntimeException{
+        LOGGER.info("[signIn] 로그인을 시도하고 있습니다. id : {], pw: ****",requestDto.getId());
+        SignInResultDto signInResultDto = signService.signIn(requestDto.getId(),requestDto.getPassword());
 
         if(signInResultDto.getCode() == 0){
-            LOGGER.info("[signIn] 정상적으로 로그인 되었습니다. id : {}, token : {}",id,signInResultDto.getToken());
+            LOGGER.info("[signIn] 정상적으로 로그인 되었습니다. id : {}, token : {}",requestDto.getId(),signInResultDto.getToken());
         }
 
         return signInResultDto;
@@ -118,16 +117,11 @@ public class UserController {
 
     @ApiOperation(value="회원가입",notes = "아이디, 비밀번호, 이메일, 권한을 입력하세요")
     @PostMapping(value = "/sign-up")
-    public SignUpResultDto signUp(
-            @ApiParam(value="ID",required = true) @RequestParam String id,
-            @ApiParam(value="비밀번호",required = true) @RequestParam String password,
-            @ApiParam(value="이름",required = true) @RequestParam String name,
-            @ApiParam(value="이메일",required = true) @RequestParam String email,
-            @ApiParam(value="권한",required = true) @RequestParam String role){
-        LOGGER.info("[signUp] 회원가입을 수행합니다. id: {},password: ****, name : {}, email : {},  role : {}",id,name,email,role);
-        SignUpResultDto signUpResultDto = signService.signUp(id,password,name,email,role);
+    public SignUpResultDto signUp(@Valid @RequestBody SignUpRequestDto requestDto){
+        LOGGER.info("[signUp] 회원가입을 수행합니다. id: {},password: ****, name : {}, email : {},  role : {}",requestDto.getId(),requestDto.getName(),requestDto.getEmail(),requestDto.getRole());
+        SignUpResultDto signUpResultDto = signService.signUp(requestDto.getId(),requestDto.getPassword(),requestDto.getName(),requestDto.getEmail(),requestDto.getRole());
 
-        LOGGER.info("[signUp] 회원가입을 완료했습니다. id : {}", id);
+        LOGGER.info("[signUp] 회원가입을 완료했습니다. id : {}", requestDto.getId());
 
         return signUpResultDto;
     }

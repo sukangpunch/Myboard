@@ -3,12 +3,20 @@ package com.springboot.board.dto;
 import com.springboot.board.domain.User;
 import lombok.*;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 @Getter
 @ToString
 @NoArgsConstructor
 public class UserDto {
 
+
+    @NotBlank(message = "이름을 적어주세요")
     private String name;
+
+    @Email
     private String email;
 
     @Builder

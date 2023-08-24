@@ -85,7 +85,7 @@ public class BoardService {
 
     public Long savePost(Long userId,BoardDto boardDto){
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("잘못된 회원입니다"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("잘못된 회원입니다"));
         Board board = boardDto.toEntity();
         board.setCreatedDate(LocalDateTime.now());
         board.setUser(user);
@@ -97,7 +97,7 @@ public class BoardService {
     public BoardResponseDto updateBoard(Long no, BoardDto boardDto) {
         // 데이터베이스에서 no에 해당하는 board 엔티티를 조회
         Board board = boardRepository.findById(no)
-                .orElseThrow(() -> new NoSuchElementException("Board not found with ID: " + no));
+                .orElseThrow(() -> new RuntimeException("Board not found with ID: " + no));
 
         // board 엔티티의 필드를 boardDto 값으로 업데이트하고 데이터베이스에 저장
         board.setWriter(boardDto.getWriter());
